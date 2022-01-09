@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using CRUD_ASP_NET.Data;
 using CRUD_ASP_NET.Models;
 
@@ -21,11 +22,24 @@ namespace CRUD_ASP_NET.Pages.Employees
         }
 
         public string test = "text of test";
-        public IList<Employee> Employee { get;set; }
+        public IList<Employee> Employee { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public string SearchString { get; set; }
 
         public async Task OnGetAsync()
         {
-            Employee = await _context.Employee.ToListAsync();
+            var employee = from emp in _context.Employee
+                           select emp;
+
+            if (!string.IsNullOrEmpty(SearchString))
+            {
+                SearchString = SearchString.ToLower().Trim();
+
+                employee = employee.Where(emp =>  (emp.Name.ToLower() + " " + emp.LastName.ToLower()).Contains(SearchString));
+            }
+
+            Employee = await employee.ToListAsync();
         }
     }
 }
