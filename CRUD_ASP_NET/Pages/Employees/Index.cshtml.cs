@@ -20,6 +20,7 @@ namespace CRUD_ASP_NET.Pages.Employees
             _context = context;
         }
 
+        public string test = "text of test";
         public IList<Employee> Employee { get;set; }
 
         public async Task OnGetAsync()
